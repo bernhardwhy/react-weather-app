@@ -11,7 +11,7 @@ class App extends Component {
       <div className={classes.App}>
         <header className={classes.AppHeader}>
           <img src={logo} className={classes.AppLogo} alt="logo" />
-          <h1 className={classes.AppTitle}>Welcome to React</h1>
+          <h1 className={classes.AppTitle}>Welcome to Weater App</h1>
         </header>
         <p className={classes.AppIntro}>
           To get started, edit <code>src/App.js</code> and save to reload.
