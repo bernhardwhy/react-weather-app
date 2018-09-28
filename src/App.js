@@ -11,6 +11,9 @@ import HeadingTextContainer from './components/HeadingTextContainer/HeadingTextC
 import Swipeable from 'react-swipeable'
 
 
+let datesArray = [];
+let weatherIncrement = 0;
+
 
 class App extends Component {
 
@@ -19,6 +22,8 @@ class App extends Component {
     headerOffset: 0,
     descOffset: 0,
     textOpacity: 1,
+    dateText: 'sontag und sio',
+    tempText: '12'
   }
 
   componentDidMount() {
@@ -41,7 +46,14 @@ class App extends Component {
     if (deltaX > 0) {
       this.setState({ textOpacity: 0 });
       setTimeout(() => {
-        this.setState({ headerOffset: 0, descOffset: 0, weatherType: 'winter' });
+        weatherIncrement = weatherIncrement <= 6 ? weatherIncrement + 1 : 0;
+        this.setState({
+          headerOffset: 0,
+          descOffset: 0,
+          weatherType: this.props.weather.daily.data[weatherIncrement].icon,
+          dateText: datesArray[weatherIncrement],
+          tempText: this.props.weather.daily.data[weatherIncrement].temperatureHigh.toFixed()
+        });
       }, 300);
       setTimeout(() => {
         this.setState({ textOpacity: 1 });
@@ -54,22 +66,39 @@ class App extends Component {
   }
 
   render() {
+    if (this.props.weather && datesArray.length === 0) {
+      this.props.weather.daily.data.forEach(element => {
+        var now = new Date(element.time * 1000);
+        console.log(element.icon);
+        console.log(now.toDateString());
+        datesArray.push(now.toDateString());
+      });
+    }
+
+
+
+
     return (
-      <div className={classes.App}>
-        <Swipeable
-          style={{ height: '100%', width: '100%' }}
-          onSwipingLeft={this.swipingLeft}
-          onSwipingRight={() => console.log('swipe right')}
-          onSwiped={this.swiped}
-          onSwipedUp={this.swipedUp} >
-          <HeadingTextContainer
-            leftHeaderOffset={this.state.headerOffset}
-            leftDescOffset={this.state.descOffset}
-            textOpacity={this.state.textOpacity}
-            weatherType={this.state.weatherType} />
-          <BackgroundContainer weatherType={this.state.weatherType} />
-        </Swipeable>
-        <Route path='/detail' exact component={Detail} />
+      <div className={classes.App} >
+        {
+          this.props.weather ?
+            <Swipeable
+              style={{ height: '100%', width: '100%' }}
+              onSwipingLeft={this.swipingLeft}
+              onSwipingRight={() => console.log('swipe right')}
+              onSwiped={this.swiped}
+              onSwipedUp={this.swipedUp} >
+
+              <HeadingTextContainer
+                leftHeaderOffset={this.state.headerOffset}
+                leftDescOffset={this.state.descOffset}
+                textOpacity={this.state.textOpacity}
+                dateText={this.state.dateText}
+                tempText={this.state.tempText} />
+              <BackgroundContainer weatherType={this.state.weatherType} />
+            </Swipeable> : null
+        }
+        < Route path='/detail' exact component={Detail} />
       </div>
     );
   }
@@ -77,7 +106,7 @@ class App extends Component {
 
 const mapStateToProps = state => {
   return {
-    products: state.products
+    weather: state.weather
   };
 }
 
