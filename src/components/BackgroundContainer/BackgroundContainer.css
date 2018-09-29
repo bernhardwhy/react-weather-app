@@ -1,18 +1,15 @@
 .summerAnimationColor{
-    background: linear-gradient(270deg, #f7d53b, #edd566);
+    /* background: linear-gradient(270deg, #81caff, #419fe1); */
+    background: linear-gradient(270deg, #93d4ff, #69bff8);
 }
-
 .winterAnimationColor{
-    background: linear-gradient(270deg, #a4d0e8, #8faebe);
-}
-.hotSummerAnimationColor{
-    background: linear-gradient(270deg, #d74240, #a12b29);
+    background: linear-gradient(270deg, #e8ebed, #b6cede);
 }
 .foggyAnimationColor{
     background: linear-gradient(270deg, #707579, #585858);
 }
 .rainyAnimationColor{
-    background: linear-gradient(270deg, #39485b, #282e36);
+    background: linear-gradient(270deg, #63869d, rgb(26, 55, 74));
 }
 
 

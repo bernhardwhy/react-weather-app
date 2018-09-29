@@ -22,8 +22,9 @@ class App extends Component {
     headerOffset: 0,
     descOffset: 0,
     textOpacity: 1,
-    dateText: 'sontag und sio',
-    tempText: '12'
+    dateText: 'optimistic weather',
+    tempText: null,
+    weatherTypeText: null
   }
 
   componentDidMount() {
@@ -52,7 +53,8 @@ class App extends Component {
           descOffset: 0,
           weatherType: this.props.weather.daily.data[weatherIncrement].icon,
           dateText: datesArray[weatherIncrement],
-          tempText: this.props.weather.daily.data[weatherIncrement].temperatureHigh.toFixed()
+          tempText: this.props.weather.daily.data[weatherIncrement].temperatureHigh.toFixed(),
+          weatherTypeText: this.props.weather.daily.data[weatherIncrement].summary,
         });
       }, 300);
       setTimeout(() => {
@@ -61,8 +63,8 @@ class App extends Component {
     }
   }
 
-  swipedUp(e, deltaY, isFlick) {
-    console.log("You Swiped Up...", e, deltaY, isFlick)
+  swipedDown = (e, deltaY, isFlick) => {
+    this.props.onGetOffers();
   }
 
   render() {
@@ -87,13 +89,14 @@ class App extends Component {
               onSwipingLeft={this.swipingLeft}
               onSwipingRight={() => console.log('swipe right')}
               onSwiped={this.swiped}
-              onSwipedUp={this.swipedUp} >
+              onSwipedDown={this.swipedDown} >
 
               <HeadingTextContainer
                 leftHeaderOffset={this.state.headerOffset}
                 leftDescOffset={this.state.descOffset}
                 textOpacity={this.state.textOpacity}
                 dateText={this.state.dateText}
+                weatherTypeText={this.state.weatherTypeText}
                 tempText={this.state.tempText} />
               <BackgroundContainer weatherType={this.state.weatherType} />
             </Swipeable> : null

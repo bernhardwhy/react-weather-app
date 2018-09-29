@@ -12,14 +12,23 @@ color: white;
 }
 
 .HeaderText{
-    font-weight: lighter;
+    font-weight: 100;
     font-size: 5em;
     margin: 0;
+    text-align: center;
+}
+
+.WeatherType{
+    font-weight: 100;
+    font-size: 1em;
+    margin: 0;
+    text-align: left;
 }
 
 .DateText{
     font-weight: bold;
     font-size: 1em; 
-    margin: 0;
+    margin-top: 10px;
+    margin-bottom: 0;
     text-align: left;
 }

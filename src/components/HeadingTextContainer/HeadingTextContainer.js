@@ -17,14 +17,18 @@ export class componentName extends Component {
         return (
             <div className={classes.HeaderContainer}>
                 <div className={classes.TextWrapper}>
-                    <p style={{
-                        transition: '.3s ease all',
-                        transform: `translateX(-${this.props.leftHeaderOffset}px)`,
-                        opacity: this.props.textOpacity === 0 ? 0 : calculateOpacity(this.props.leftHeaderOffset)
-                    }}
-                        className={classes.HeaderText}>
-                        {this.props.tempText}°
-                    </p>
+                    {this.props.tempText ?
+                        <p style={{
+                            transition: '.3s ease all',
+                            transform: `translateX(-${this.props.leftHeaderOffset}px)`,
+                            opacity: this.props.textOpacity === 0 ? 0 : calculateOpacity(this.props.leftHeaderOffset)
+                        }}
+                            className={classes.HeaderText}>
+                            {this.props.tempText}°
+                                    </p>
+
+                        : null}
+
                     <p style={{
                         transition: '.3s ease all',
                         transform: `translateX(-${this.props.leftDescOffset}px)`,
@@ -33,6 +37,16 @@ export class componentName extends Component {
                         className={classes.DateText}>
                         {this.props.dateText}
                     </p>
+                    {this.props.weatherTypeText ?
+                        <p style={{
+                            transition: '.3s ease all',
+                            transform: `translateX(-${this.props.leftHeaderOffset}px)`,
+                            opacity: this.props.textOpacity === 0 ? 0 : calculateOpacity(this.props.leftHeaderOffset)
+                        }}
+                            className={classes.WeatherType}>
+                            {this.props.weatherTypeText}
+                        </p>
+                        : null}
                 </div>
             </div>
         )

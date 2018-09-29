@@ -8,9 +8,6 @@ const weatherTypeObject = {
     winter: {
         name: 'winterAnimationColor',
     },
-    hotSummer: {
-        name: 'hotSummerAnimationColor',
-    },
     foggy: {
         backgroundColor: '#707579',
         name: 'foggyAnimationColor',
@@ -28,23 +25,10 @@ export class componentName extends Component {
     }
 
     render() {
-        let convertedWeatherType = 'summer';
-        // if (this.props.weatherType === 'clear-day' ||
-        //     this.props.weatherType === 'clear-night' ||
-        //     this.props.weatherType === 'rain' ||
-        //     this.props.weatherType === 'snow' ||
-        //     this.props.weatherType === 'sleet' ||
-        //     this.props.weatherType === 'wind' ||
-        //     this.props.weatherType === 'fog' ||
-        //     this.props.weatherType === 'cloudy' ||
-        //     this.props.weatherType === 'partly-cloudy-day' ||
-        //     this.props.weatherType === 'partly-cloudy-night'
-        // ) {
-        //     convertedWeatherType = 'winter';
-        // }
+        let convertedWeatherType = 'partly-cloudy-night';
         switch (this.props.weatherType) {
             case 'partly-cloudy-night':
-                convertedWeatherType = 'hotSummer';
+                convertedWeatherType = 'summer';
                 break;
             case 'partly-cloudy-day':
                 convertedWeatherType = 'summer';
@@ -63,7 +47,7 @@ export class componentName extends Component {
                 break;
 
             default:
-                convertedWeatherType = 'foggy';
+                convertedWeatherType = 'summer';
                 break;
         }
         const themedStyling = [classes.bgAnimation, classes[weatherTypeObject[convertedWeatherType].name]].join(' ');
