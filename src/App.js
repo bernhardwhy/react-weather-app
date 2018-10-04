@@ -9,7 +9,11 @@ import Detail from './Detail/Detail';
 import BackgroundContainer from './components/BackgroundContainer/BackgroundContainer';
 import HeadingTextContainer from './components/HeadingTextContainer/HeadingTextContainer';
 import Swipeable from 'react-swipeable'
+import localforage from 'localforage'
 
+
+let datesArray = [];
+let weatherIncrement = 0;
 
 
 class App extends Component {
@@ -19,10 +23,35 @@ class App extends Component {
     headerOffset: 0,
     descOffset: 0,
     textOpacity: 1,
+    dateText: 'optimistic weather',
+    tempText: null,
+    weatherTypeText: null,
+    weatherData: null,
   }
 
   componentDidMount() {
-    this.props.onGetOffers();
+    localforage.getItem('weatherData', (err, value) => {
+      this.setState({ weatherData: value });
+      if (!value || !this.dateIsFresh(value)) {
+        this.props.onGetOffers();
+      }
+    })
+  }
+
+  componentDidUpdate() {
+    if (this.props.weather && !this.state.weatherData) {
+      localforage.setItem('weatherData', this.props.weather, (err) => {
+        localforage.getItem('weatherData', (err, value) => {
+          this.setState({ weatherData: value });
+        })
+      });
+    }
+  }
+
+  dateIsFresh = (localWeatherData) => {
+    let localWeatherDay = new Date(localWeatherData.daily.data[0].time * 1000);
+    let now = new Date();
+    return now >= localWeatherDay;
   }
 
   swiping(e, deltaX, deltaY, absX, absY, velocity) {
@@ -41,7 +70,15 @@ class App extends Component {
     if (deltaX > 0) {
       this.setState({ textOpacity: 0 });
       setTimeout(() => {
-        this.setState({ headerOffset: 0, descOffset: 0, weatherType: 'winter' });
+        weatherIncrement = weatherIncrement <= 6 ? weatherIncrement + 1 : 0;
+        this.setState({
+          headerOffset: 0,
+          descOffset: 0,
+          weatherType: this.state.weatherData.daily.data[weatherIncrement].icon,
+          dateText: datesArray[weatherIncrement],
+          tempText: this.state.weatherData.daily.data[weatherIncrement].temperatureHigh.toFixed(),
+          weatherTypeText: this.state.weatherData.daily.data[weatherIncrement].summary,
+        });
       }, 300);
       setTimeout(() => {
         this.setState({ textOpacity: 1 });
@@ -49,27 +86,43 @@ class App extends Component {
     }
   }
 
-  swipedUp(e, deltaY, isFlick) {
-    console.log("You Swiped Up...", e, deltaY, isFlick)
+  swipedDown = (e, deltaY, isFlick) => {
+    console.log('swiped down');
+
   }
 
   render() {
+    if (this.state.weatherData && datesArray.length === 0) {
+      this.state.weatherData.daily.data.forEach(element => {
+        var now = new Date(element.time * 1000);
+        datesArray.push(now.toDateString());
+        console.log(now, now.toDateString());
+      });
+    }
+
+
     return (
-      <div className={classes.App}>
-        <Swipeable
-          style={{ height: '100%', width: '100%' }}
-          onSwipingLeft={this.swipingLeft}
-          onSwipingRight={() => console.log('swipe right')}
-          onSwiped={this.swiped}
-          onSwipedUp={this.swipedUp} >
-          <HeadingTextContainer
-            leftHeaderOffset={this.state.headerOffset}
-            leftDescOffset={this.state.descOffset}
-            textOpacity={this.state.textOpacity}
-            weatherType={this.state.weatherType} />
-          <BackgroundContainer weatherType={this.state.weatherType} />
-        </Swipeable>
-        <Route path='/detail' exact component={Detail} />
+      <div className={classes.App} >
+        {
+          this.state.weatherData ?
+            <Swipeable
+              style={{ height: '100%', width: '100%' }}
+              onSwipingLeft={this.swipingLeft}
+              onSwipingRight={() => console.log('swipe right')}
+              onSwiped={this.swiped}
+              onSwipedDown={this.swipedDown} >
+
+              <HeadingTextContainer
+                leftHeaderOffset={this.state.headerOffset}
+                leftDescOffset={this.state.descOffset}
+                textOpacity={this.state.textOpacity}
+                dateText={this.state.dateText}
+                weatherTypeText={this.state.weatherTypeText}
+                tempText={this.state.tempText} />
+              <BackgroundContainer weatherType={this.state.weatherType} />
+            </Swipeable> : null
+        }
+        < Route path='/detail' exact component={Detail} />
       </div>
     );
   }
@@ -77,7 +130,7 @@ class App extends Component {
 
 const mapStateToProps = state => {
   return {
-    products: state.products
+    weather: state.weather
   };
 }
 

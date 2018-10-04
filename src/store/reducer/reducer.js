@@ -7,16 +7,10 @@ const initalState = {
 const reducer = (state = initalState, action) => {
     switch (action.type) {
         case actionTypes.SAVE_OFFERS:
-            console.log(action.products);
-            const sortedWeatherData = {
-                days: [],
-            };
-            action.products.forEach(element => {
-                // sortedWeatherData.days
-            });
+            console.log(action.weather);
             return {
                 ...state,
-                products: action.products
+                weather: action.weather
             }
         default:
             return state;
