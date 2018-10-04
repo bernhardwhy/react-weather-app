@@ -9,6 +9,7 @@ import Detail from './Detail/Detail';
 import BackgroundContainer from './components/BackgroundContainer/BackgroundContainer';
 import HeadingTextContainer from './components/HeadingTextContainer/HeadingTextContainer';
 import Swipeable from 'react-swipeable'
+import localforage from 'localforage'
 
 
 let datesArray = [];
@@ -24,11 +25,33 @@ class App extends Component {
     textOpacity: 1,
     dateText: 'optimistic weather',
     tempText: null,
-    weatherTypeText: null
+    weatherTypeText: null,
+    weatherData: null,
   }
 
   componentDidMount() {
-    this.props.onGetOffers();
+    localforage.getItem('weatherData', (err, value) => {
+      this.setState({ weatherData: value });
+      if (!value || !this.dateIsFresh(value)) {
+        this.props.onGetOffers();
+      }
+    })
+  }
+
+  componentDidUpdate() {
+    if (this.props.weather && !this.state.weatherData) {
+      localforage.setItem('weatherData', this.props.weather, (err) => {
+        localforage.getItem('weatherData', (err, value) => {
+          this.setState({ weatherData: value });
+        })
+      });
+    }
+  }
+
+  dateIsFresh = (localWeatherData) => {
+    let localWeatherDay = new Date(localWeatherData.daily.data[0].time * 1000);
+    let now = new Date();
+    return now >= localWeatherDay;
   }
 
   swiping(e, deltaX, deltaY, absX, absY, velocity) {
@@ -51,10 +74,10 @@ class App extends Component {
         this.setState({
           headerOffset: 0,
           descOffset: 0,
-          weatherType: this.props.weather.daily.data[weatherIncrement].icon,
+          weatherType: this.state.weatherData.daily.data[weatherIncrement].icon,
           dateText: datesArray[weatherIncrement],
-          tempText: this.props.weather.daily.data[weatherIncrement].temperatureHigh.toFixed(),
-          weatherTypeText: this.props.weather.daily.data[weatherIncrement].summary,
+          tempText: this.state.weatherData.daily.data[weatherIncrement].temperatureHigh.toFixed(),
+          weatherTypeText: this.state.weatherData.daily.data[weatherIncrement].summary,
         });
       }, 300);
       setTimeout(() => {
@@ -64,26 +87,24 @@ class App extends Component {
   }
 
   swipedDown = (e, deltaY, isFlick) => {
-    this.props.onGetOffers();
+    console.log('swiped down');
+
   }
 
   render() {
-    if (this.props.weather && datesArray.length === 0) {
-      this.props.weather.daily.data.forEach(element => {
+    if (this.state.weatherData && datesArray.length === 0) {
+      this.state.weatherData.daily.data.forEach(element => {
         var now = new Date(element.time * 1000);
-        console.log(element.icon);
-        console.log(now.toDateString());
         datesArray.push(now.toDateString());
+        console.log(now, now.toDateString());
       });
     }
-
-
 
 
     return (
       <div className={classes.App} >
         {
-          this.props.weather ?
+          this.state.weatherData ?
             <Swipeable
               style={{ height: '100%', width: '100%' }}
               onSwipingLeft={this.swipingLeft}

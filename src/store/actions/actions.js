@@ -14,8 +14,7 @@ export const getOffers = () => {
         //https://api.darksky.net/forecast/0fada81dba1f29269d66acfdffeee0db/48.281986,%2016.383277?exclude=minutes,hourly&units=auto&lang=de
         axios.get('https://api.darksky.net/forecast/0fada81dba1f29269d66acfdffeee0db/48.281986,%2016.383277?exclude=minutes,hourly&units=auto&lang=de')
             .then(response => {
-                console.log(response);
-                dispatch(saveOffers(weatherData));
+                dispatch(saveOffers(response.data));
             }).catch(error => {
                 console.log(error);
 
